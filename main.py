@@ -3,6 +3,8 @@ import cv2
 import numpy as np
 import time
 
+import csv
+
 from sort import *
 from util import *
 
@@ -49,6 +51,7 @@ while True:
                 capturing = True
                 start_time = time.time()
                 frames = []
+                recognized_text_list = []
 
     # Capture frames for 3 seconds
     if capturing:
@@ -87,9 +90,20 @@ while True:
                     
                     # Read license plate number
                     license_plate_text, license_plate_text_score = read_license_plate(license_plate_crop_gray)
-                    print(f"Frame {idx + 1}: Detected License Plate: {license_plate_text}")
+                    # print(f"Frame {idx + 1}: Detected License Plate: {license_plate_text} soce -> {license_plate_text_score}")
+                    recognized_text_list.append(license_plate_text)
+            
+            # for t in recognized_text_list:
+            #     print(f"Recognized License Plate: {t}")
+            
+            # Write the recognized text data to a CSV file
+            with open('frames_data.csv', 'a', newline='') as csvfile:
+                csvwriter = csv.writer(csvfile)
+                # Write the recognized text list as a single row
+                csvwriter.writerow(recognized_text_list)
                     
             frames = []  # Clear frames list for the next capture
+            recognized_text_list = []
             
     # Display the frame with detections
     cv2.imshow('Frame', frame)

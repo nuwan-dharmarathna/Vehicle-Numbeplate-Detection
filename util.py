@@ -45,13 +45,13 @@ def read_license_plate(license_plate_crop):
     detections = reader.readtext(license_plate_crop)
     result_text = ''.join(text.upper().replace(' ', '') for _, text, _ in detections)
     
-    print(f'recognized_plate -> {result_text}, {len(result_text)}')
+    # print(f'recognized_plate -> {result_text}, {len(result_text)}')
     
     if license_complies_format(result_text):
         formatted_text = format_license(result_text)
-        print(f'formatted_plate -> {formatted_text}')
-        return formatted_text, None  # Adjust confidence score calculation as needed
-    return None, None
+        # print(f'formatted_plate -> {formatted_text}')
+        # return formatted_text, None  # Adjust confidence score calculation as needed
+    return result_text, None
 
 
 def get_car(license_plate, vehicle_track_ids):
