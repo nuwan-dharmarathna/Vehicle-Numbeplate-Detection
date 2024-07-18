@@ -1,7 +1,6 @@
 from ultralytics import YOLO
 import cv2
 import numpy as np
-import time
 
 
 from sort import *
@@ -23,7 +22,6 @@ vehicles = [2, 3, 5, 7]
 
 frames = []
 capturing = False
-start_time = None
 
 while True:
     # Capture frame-by-frame
@@ -48,14 +46,11 @@ while True:
                 
                 # Start capturing frames for 3 seconds
                 capturing = True
-                start_time = time.time()
                 frames = []
                 recognized_text_list = []
-                scores= []
 
     # Capture frames for 3 seconds
     if capturing:
-        current_time = time.time()
         frames.append(frame)
 
         # Stop capturing after 30 frames
