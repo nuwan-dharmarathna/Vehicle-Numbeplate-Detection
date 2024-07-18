@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 import time
 
-import csv
 
 from sort import *
 from util import *
@@ -12,7 +11,7 @@ from util import *
 mot_tracker = Sort()
 
 # Load Models
-coco_model = YOLO('./models/yolov8n.pt')  
+coco_model = YOLO('./models/yolov8n.pt')
 license_plate_detector = YOLO('./models/plate_detector.pt') 
 
 
@@ -52,16 +51,17 @@ while True:
                 start_time = time.time()
                 frames = []
                 recognized_text_list = []
+                scores= []
 
     # Capture frames for 3 seconds
     if capturing:
         current_time = time.time()
         frames.append(frame)
 
-        # Stop capturing after 3 seconds
-        if current_time - start_time >= 3:
+        # Stop capturing after 30 frames
+        if len(frames) < 30:
             capturing = False
-            print(f"Captured {len(frames)} frames in 3 seconds.")
+            print(f"Captured {len(frames)} frames.")
             
             # Process each captured frame
             for idx, f in enumerate(frames):
@@ -90,17 +90,18 @@ while True:
                     
                     # Read license plate number
                     license_plate_text, license_plate_text_score = read_license_plate(license_plate_crop_gray)
-                    # print(f"Frame {idx + 1}: Detected License Plate: {license_plate_text} soce -> {license_plate_text_score}")
-                    recognized_text_list.append(license_plate_text)
+                    
+                    if (license_plate_text_score and license_plate_text_score[0] < 0.3):
+                        # scores.append(license_plate_text_score)
+                        recognized_text_list.append(license_plate_text)
+                    
             
-            # for t in recognized_text_list:
-            #     print(f"Recognized License Plate: {t}")
+            #removing first two charactors from the recognized text_list
+            new_list = [el[2:] for el in recognized_text_list]
             
-            # Write the recognized text data to a CSV file
-            with open('frames_data.csv', 'a', newline='') as csvfile:
-                csvwriter = csv.writer(csvfile)
-                # Write the recognized text list as a single row
-                csvwriter.writerow(recognized_text_list)
+            for item in new_list:
+                print(item)
+            
                     
             frames = []  # Clear frames list for the next capture
             recognized_text_list = []
