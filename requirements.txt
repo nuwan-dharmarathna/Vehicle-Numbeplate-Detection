@@ -4,3 +4,5 @@ opencv-python
 ultralytics
 python-dotenv
 mysql-connector-python
+streamlit
+pandas
