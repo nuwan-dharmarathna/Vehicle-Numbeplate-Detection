@@ -11,7 +11,7 @@ mot_tracker = Sort()
 
 # Load Models
 coco_model = YOLO('./models/yolov8n.pt')
-license_plate_detector = YOLO('./models/plate_detector.pt') 
+license_plate_detector = YOLO('./models/plate_detector.pt')
 
 
 # Initialize webcam capture

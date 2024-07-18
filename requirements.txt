@@ -1,0 +1,6 @@
+numpy
+easyocr
+opencv-python
+ultralytics
+python-dotenv
+mysql-connector-python
