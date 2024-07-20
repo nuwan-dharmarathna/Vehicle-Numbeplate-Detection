@@ -93,7 +93,7 @@ if option == "Go to Database ⌸":
         elif v_opt == "Update Vehicle":
             st.subheader("Update Vehicle")
             
-            # Populate customer data
+            # Populate vehile data
             try:
                 cursor = connection.cursor()
                 cursor.execute("SELECT * FROM vehicle")
@@ -136,6 +136,37 @@ if option == "Go to Database ⌸":
             
         else:
             st.subheader("Delete Vehicle")
+            
+            # Populate vehile data
+            try:
+                cursor = connection.cursor()
+                cursor.execute("SELECT * FROM vehicle")
+                
+                results = cursor.fetchall()
+                
+                options = [f"{row[0]} - {row[1]} - {row[2]}"for row in results]
+                
+                vehicle = st.selectbox("Select vehicle", options)
+                vehicle_details = vehicle.split(" - ")
+            except Error as e:
+                st.error(f"Error: {e}")
+            finally:
+                cursor.close()
+                
+            if st.button("Delete"):
+                try:
+                    #get vehicle_number
+                    vehicle_number = vehicle_details[0]
+                    
+                    query = "DELETE FROM vehicle WHERE vehicle_number = %s"
+                    val = (vehicle_number,)
+                    connection.cursor().execute(query, val)
+                    connection.commit()
+                    st.success("Successfully Deleted")
+                except Error as e:
+                    st.error(f"Error: {e}")
+                finally:
+                    connection.cursor().close()
         
     elif talble == "Customer Details":
         
@@ -227,6 +258,41 @@ if option == "Go to Database ⌸":
                     st.error("Please fill in all the fields")
         else:
             st.subheader("Delete Customer")
+            
+            # Populate customer data
+            try:
+                cursor = connection.cursor()
+                cursor.execute("SELECT * FROM owner")
+                
+                results = cursor.fetchall()
+                
+                # Create the options for the select box
+                options = [f"{row[0]} - {row[1]} - {row[2]} - {row[3]}" for row in results]
+                
+                owner = st.selectbox("Select one", options)
+                
+                owner_details = owner.split(" - ")
+            
+            except Error as e:
+                st.error(f"Error: {e}")
+            finally:
+                cursor.close()
+            
+            if st.button("Delete"):
+                try:
+                    #get owner_id
+                    owner_id = int(owner_details[0])
+                    
+                    query = "DELETE FROM owner WHERE owner_id = %s"
+                    val = (owner_id,)
+                    connection.cursor().execute(query, val)
+                    connection.commit()
+                    st.success("Successfully Deleted")
+                except Error as e:
+                    st.error(f"Error: {e}")
+                finally:
+                    connection.cursor().close()
+            
             
 else:
     st.subheader("Welcome to Live System")
