@@ -35,14 +35,14 @@ st.title("Automated Gate System")
 
 # display the options in sidebar
 
-option = st.sidebar.selectbox("Select Option", ["Go to Database", "Go to Live"], placeholder="Choose an Option")
+option = st.sidebar.selectbox("Select Option", ["Go to Database ⌸", "Go to Live ◎"], placeholder="Choose an Option")
 
 # Perform selected option
-if option == "Go to Database":
+if option == "Go to Database ⌸":
     st.subheader("Welcome to '{}' Database".format(str.upper(DB_NAME)))
     talble = st.selectbox("Select Table", ["Vehicle Details", "Customer Details"])
     if talble == "Vehicle Details":
-        st.subheader("---------------------------Vehicle Details----------------------------", )
+        st.subheader("Vehicle Details 🚗")
         v_opt = st.selectbox("Vehicle Details", ["Display Vehicle Details", "Add Vehicle", "Update Vehicle", "Delete Vehicle"])
         if v_opt == "Display Vehicle Details":
             st.subheader("Display Vehicle Details")
@@ -74,12 +74,14 @@ if option == "Go to Database":
             result = cursor.fetchall()
             cursor.close()
             
-            owner = st.selectbox("Select one", [row[0] for row in result])
+            options = [f"{row[0]} - {row[1]} - {row[3]}" for row in result]
+            
+            owner = st.selectbox("Select one", options)
             
             if st.button("Add Details"):
                 try:
                     query = "insert into vehicle(vehicle_number, model, owner_id) values(%s, %s, %s)"
-                    val = (v_number, model, owner)
+                    val = (v_number, model, owner[0])
                     connection.cursor().execute(query, val)
                     connection.commit()
                     st.success("Successfully Created")
@@ -91,13 +93,53 @@ if option == "Go to Database":
         elif v_opt == "Update Vehicle":
             st.subheader("Update Vehicle")
             
+            # Populate customer data
+            try:
+                cursor = connection.cursor()
+                cursor.execute("SELECT * FROM vehicle")
+                
+                results = cursor.fetchall()
+                
+                options = [f"{row[0]} - {row[1]} - {row[2]}"for row in results]
+                
+                vehicle = st.selectbox("Select vehicle", options)
+                vehicle_details = vehicle.split(" - ")
+            except Error as e:
+                st.error(f"Error: {e}")
+            finally:
+                cursor.close()
             
+            st.write("-"*20)
+            
+            if vehicle:
+                # vehicle_number = st.text_input("Number Plate", vehicle_details[0])
+                model = st.text_input("Model", vehicle_details[1])
+                owner_id = st.text_input("owner ID", vehicle_details[2])
+                vehicle_number = vehicle_details[0]
+                
+                if st.button("Update"):
+                    try:
+                        query = """ UPDATE vehicle
+                                    SET model = %s, owner_id = %s
+                                    WHERE vehicle_number = %s
+                                    """
+                        val = (model, owner_id, vehicle_number)
+                        connection.cursor().execute(query, val)
+                        connection.commit()
+                        st.success("Successfully Updated")
+                    except Error as e:
+                        st.error(f"Error: {e}")
+                    finally:
+                        connection.cursor().close()
+            else:
+                st.warning("Please select a vehicle to update")
             
         else:
             st.subheader("Delete Vehicle")
         
     elif talble == "Customer Details":
-        st.subheader("---------------------------Customer Details---------------------------")
+        
+        st.subheader("Customer Details 👨‍💼")
         
         c_opt = st.selectbox("Customer Details", ["Display Customer Details", "Add Customer", "Update Customer", "Delete Customer"])
         
@@ -141,25 +183,48 @@ if option == "Go to Database":
             st.subheader("Update Customer")
             
             # Populate customer data
-            
             try:
                 cursor = connection.cursor()
                 cursor.execute("SELECT * FROM owner")
                 
                 results = cursor.fetchall()
                 
-
+                # Create the options for the select box
+                options = [f"{row[0]} - {row[1]} - {row[2]} - {row[3]}" for row in results]
+                
+                owner = st.selectbox("Select one", options)
+                
+                owner_details = owner.split(" - ")
             
             except Error as e:
                 st.error(f"Error: {e}")
             finally:
                 cursor.close()
                 
-            f_name = st.text_input("First Name")
-            l_name = st.text_input("Last Name")
-            phone = st.text_input("Phone")
-            
-            
+            st.write("-"*20)
+                
+            if owner:
+                f_name = st.text_input("First Name", owner_details[1])
+                l_name = st.text_input("Last Name", owner_details[2])
+                phone = st.text_input("Phone", owner_details[3])
+                owner_id = int(owner_details[0])
+                
+                if st.button("Update"):
+                    try:
+                        query = """ UPDATE owner
+                                    SET first_name = %s, last_name = %s, phone = %s
+                                    WHERE owner_id = %s
+                                    """
+                        val = (f_name, l_name, phone, owner_id)
+                        connection.cursor().execute(query, val)
+                        connection.commit()
+                        st.success("Successfully Updated")
+                    except Error as e:
+                        st.error(f"Error: {e}")
+                    finally:
+                        connection.cursor().close()
+                else:
+                    st.error("Please fill in all the fields")
         else:
             st.subheader("Delete Customer")
             
