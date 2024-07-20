@@ -39,11 +39,17 @@ option = st.sidebar.selectbox("Select Option", ["Go to Database ⌸", "Go to Liv
 
 # Perform selected option
 if option == "Go to Database ⌸":
+    #heading_1
     st.subheader("Welcome to '{}' Database".format(str.upper(DB_NAME)))
+    
+    #select table
     talble = st.selectbox("Select Table", ["Vehicle Details", "Customer Details"])
+    
+    #vehicle table
     if talble == "Vehicle Details":
         st.subheader("Vehicle Details 🚗")
         v_opt = st.selectbox("Vehicle Details", ["Display Vehicle Details", "Add Vehicle", "Update Vehicle", "Delete Vehicle"])
+        # Display vehicle
         if v_opt == "Display Vehicle Details":
             st.subheader("Display Vehicle Details")
             
@@ -62,6 +68,7 @@ if option == "Go to Database ⌸":
             finally:
                 cursor.close()
             
+        # Add vehicle
         elif v_opt == "Add Vehicle":
             st.subheader("Add Vehicle Details")
             
@@ -90,6 +97,7 @@ if option == "Go to Database ⌸":
                 finally:
                     connection.cursor().close()
             
+        # Update vehicle
         elif v_opt == "Update Vehicle":
             st.subheader("Update Vehicle")
             
@@ -134,6 +142,7 @@ if option == "Go to Database ⌸":
             else:
                 st.warning("Please select a vehicle to update")
             
+        # Delete vehicle
         else:
             st.subheader("Delete Vehicle")
             
@@ -167,13 +176,15 @@ if option == "Go to Database ⌸":
                     st.error(f"Error: {e}")
                 finally:
                     connection.cursor().close()
-        
+    
+    #owner table    
     elif talble == "Customer Details":
         
         st.subheader("Customer Details 👨‍💼")
         
         c_opt = st.selectbox("Customer Details", ["Display Customer Details", "Add Customer", "Update Customer", "Delete Customer"])
         
+        #Display Customer
         if c_opt == "Display Customer Details":
             st.subheader("Display Customer Details")
             
@@ -190,6 +201,7 @@ if option == "Go to Database ⌸":
             finally:
                 cursor.close()
             
+        #Add Customer
         elif c_opt == "Add Customer":
             st.subheader("Add Customer Details")
             
@@ -210,6 +222,7 @@ if option == "Go to Database ⌸":
                 finally:
                     connection.cursor().close()
             
+        #Update Customer
         elif c_opt == "Update Customer":
             st.subheader("Update Customer")
             
@@ -256,6 +269,8 @@ if option == "Go to Database ⌸":
                         connection.cursor().close()
                 else:
                     st.error("Please fill in all the fields")
+    
+        #Delete Customer
         else:
             st.subheader("Delete Customer")
             
